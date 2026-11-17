@@ -1,0 +1,24 @@
+# systemd unit to start Pi Sentinel automatically at boot (headless).
+#
+# Edit User and the paths below to match your Pi, then:
+#   sudo cp deploy/sentinel.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now sentinel
+#   journalctl -u sentinel -f        # follow the log
+
+[Unit]
+Description=Pi Sentinel colour tracker
+After=multi-user.target
+
+[Service]
+Type=simple
+User=pi
+SupplementaryGroups=video gpio
+WorkingDirectory=/home/pi/pi_sentinel/src
+ExecStart=/usr/bin/python3 /home/pi/pi_sentinel/src/sentinel.py
+Restart=on-failure
+RestartSec=3
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

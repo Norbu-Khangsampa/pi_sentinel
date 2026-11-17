@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Editor / runner scratch files
+tempCodeRunnerFile.*
+.vscode/
+.idea/
+*.swp
+
+# Logs and archives
+*.log
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local secrets
+.env

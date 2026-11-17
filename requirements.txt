@@ -1,0 +1,8 @@
+# On Raspberry Pi OS (Bookworm) install these from apt instead of pip:
+#   sudo apt install -y python3-opencv python3-numpy python3-picamera2 python3-gpiozero python3-lgpio
+# picamera2 is only available from apt, so if you use a virtual environment
+# create it with:  python3 -m venv --system-site-packages .venv
+numpy
+opencv-python
+gpiozero
+lgpio
