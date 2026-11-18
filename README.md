@@ -1,11 +1,42 @@
 # Pi Sentinel
 
-A pan-tracking camera for the Raspberry Pi 5. An Arducam CSI camera is mounted
-on an SG90 servo. OpenCV finds a coloured object in each frame, and a
-proportional controller pans the servo to keep the object centred.
+**A Raspberry Pi 5 with a camera finds a coloured object in each frame and
+turns an SG90 servo so the camera follows it along one axis, using a
+proportional controller with a deadband.**
 
-Runs headless by default, so it can be started over SSH or as a systemd
-service.
+| | |
+|---|---|
+| **Measured result** | Tracking performance: in progress, no results published yet (`tools/fps_benchmark.py` measures camera throughput) |
+| **Demo** | Tracking clip: coming soon |
+
+### System diagram
+
+```
+┌─────────────────┐ frames ┌──────────────────┐ (cx, cy) ┌─────────────────────────┐ angle ┌──────────────────┐
+│ Arducam CSI     │───────►│ tracker.py       │─────────►│ sentinel.py             │──────►│ servo.py         │
+│ vision.py       │        │ HSV mask         │          │ error = cx − centre     │       │ hardware PWM on  │
+│ background      │        │ erode/dilate x2  │          │ if |error| > 20 px:     │       │ GPIO 18, software│
+│ capture thread  │        │ largest contour  │          │   angle += Kp × error   │       │ PWM fallback     │
+└─────────────────┘        └──────────────────┘          └─────────────────────────┘       └────────┬─────────┘
+        ▲                                                                                          │
+        └──────────────────────────── camera is mounted on the SG90 servo ◄────────────────────────┘
+```
+
+Defaults: `KP = 0.05` degrees per pixel and a 20-pixel deadband
+(`src/config.py`). It runs headless over SSH, or at boot as a systemd service
+(`deploy/sentinel.service`).
+
+### Status / Planned
+
+**Built**
+- Threaded Picamera2 capture with a USB-camera fallback
+- HSV colour-blob tracking and a proportional pan controller with a deadband
+- Pi 5 hardware PWM servo driver with a software fallback
+- systemd service, HSV calibration, FPS benchmark and servo test tools
+
+**In progress (not public yet)**
+- Tracking clip
+- Recorded tracking and throughput results
 
 ## How it works
 
